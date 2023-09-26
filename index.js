@@ -29,7 +29,10 @@ io.on("connection", (socket) => {
         // the roomId is the generated id by the generateRandomString() function
         if(createdRooms[roomId]) {
             createdRooms[roomId].members.push(userName);
+            // emit the name of chat group to the specific socket who has joined
             socket.emit("chat-room-name", createdRooms[roomId].name);
+            // emit to other sockets that a user has joined
+            socket.to(roomId).emit("user-joined", userName);
             socket.join(roomId);
         }
         else {
