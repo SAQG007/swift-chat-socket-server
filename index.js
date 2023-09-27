@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
             socket.to(roomId).emit("user-joined", userName);
 
             // return the list of chat members
-            socket.to(roomId).emit("members-list", createdRooms[roomId].members);
+            io.sockets.in(roomId).emit("members-list", createdRooms[roomId].members);
         }
         else {
             socket.emit("room-not-found");
