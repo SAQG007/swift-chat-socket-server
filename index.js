@@ -37,11 +37,12 @@ io.on("connection", (socket) => {
             // emit to other sockets that a user has joined
             socket.to(roomId).emit("user-joined", userName);
 
-            // return the list of chat members
+            // emit the list of chat members to all the sockets in the room
             io.sockets.in(roomId).emit("members-list", createdRooms[roomId].members);
         }
         else {
             socket.emit("room-not-found");
+            socket.disconnect();
         }
     });
     socket.on('message', (roomId, message) => {
@@ -49,10 +50,16 @@ io.on("connection", (socket) => {
     });
     socket.on('leave-chat', (memberName, roomId) => {
         socket.leave(roomId);
+        socket.disconnect(); // disconnect socket from server
+
+        // emit the user name of the socket to the other sockets in room
         socket.to(roomId).emit("user-left", memberName);
 
-        // return the list of chat members
-        socket.to(roomId).emit("members-list", createdRooms[roomId].members); 
+        // remove the memberName from createdRooms[roomId].members array
+        createdRooms[roomId].members = arrayRemove(createdRooms[roomId].members, memberName);
+
+        // emit the list of chat members to all the sockets in the room
+        io.sockets.in(roomId).emit("members-list", createdRooms[roomId].members);
     });
     socket.on('disconnect', () => {
         console.log('A user disconnected');
@@ -73,4 +80,12 @@ function generateRandomString(length) {
     }
 
     return randomString;
+}
+
+function arrayRemove(arr, value) {
+ 
+    return arr.filter(function (name) {
+        return name != value;
+    });
+ 
 }
