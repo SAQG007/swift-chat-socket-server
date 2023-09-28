@@ -1,7 +1,5 @@
 # Swift Chat Socket Server
 
-<video src="assets/swift-chat.mp4" autoplay loop muted></video>
-
 ## Getting Started
 1. Clone this repository.
 2. Navigate to the project directory and run `npm install` to install dependencies.
